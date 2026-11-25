@@ -1,0 +1,6 @@
+{
+  "name": "MYSERVICE — Sri Lanka Services Marketplace",
+  "description": "Sri Lanka's all-in-one trilingual services marketplace connecting customers and verified professionals across all 9 provinces and 25 districts.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

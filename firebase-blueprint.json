@@ -1,0 +1,582 @@
+{
+  "entities": {
+    "User": {
+      "title": "User",
+      "description": "Core user account supporting unified Customer and Provider modes.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "displayName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "preferredLanguage": { "type": "string", "enum": ["en", "si", "ta"] },
+        "province": { "type": "string", "maxLength": 60 },
+        "district": { "type": "string", "maxLength": 60 },
+        "city": { "type": "string", "maxLength": 80 },
+        "providerStatus": { "type": "string", "enum": ["not_submitted", "pending_review", "verified", "rejected", "suspended"] },
+        "accountStatus": { "type": "string", "enum": ["active", "suspended"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "preferredLanguage", "providerStatus", "accountStatus", "createdAt", "updatedAt"]
+    },
+    "UserPrivateContact": {
+      "title": "UserPrivateContact",
+      "description": "Private PII contact fields isolated from public user documents.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 160 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "privateAddress": { "type": "string", "maxLength": 300 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "updatedAt"]
+    },
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Authorized administrator registry record.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 160 },
+        "grantedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "grantedAt"]
+    },
+    "ProviderProfile": {
+      "title": "ProviderProfile",
+      "description": "Public service provider profile excluding private identity documents.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "fullName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "businessName": { "type": "string", "maxLength": 120 },
+        "photoURL": { "type": "string", "maxLength": 500 },
+        "province": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "district": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "city": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "categoryIds": { "type": "array" },
+        "subcategories": { "type": "array" },
+        "coverageDistricts": { "type": "array" },
+        "yearsExperience": { "type": "number" },
+        "bio": { "type": "string", "minLength": 10, "maxLength": 1500 },
+        "qualifications": { "type": "string", "maxLength": 600 },
+        "startingPriceLkr": { "type": "number" },
+        "workingDays": { "type": "array" },
+        "timeSlots": { "type": "string", "maxLength": 160 },
+        "portfolioUrls": { "type": "array" },
+        "photoThumbnails": { "type": "array", "maxItems": 3 },
+        "photoCaptions": { "type": "array", "maxItems": 3 },
+        "verificationStatus": { "type": "string", "enum": ["not_submitted", "pending_review", "verified", "rejected", "suspended"] },
+        "rejectionReason": { "type": "string", "maxLength": 400 },
+        "ratingAvg": { "type": "number" },
+        "reviewCount": { "type": "number" },
+        "subscriptionPlanId": { "type": "string", "maxLength": 64 },
+        "isSample": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "fullName", "province", "district", "city", "categoryIds", "coverageDistricts", "yearsExperience", "bio", "startingPriceLkr", "verificationStatus", "createdAt", "updatedAt"]
+    },
+    "ProviderVerification": {
+      "title": "ProviderVerification",
+      "description": "Private verification documents and admin review history.",
+      "type": "object",
+      "properties": {
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "maxLength": 160 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "nicOrRegNumber": { "type": "string", "maxLength": 60 },
+        "certificateSummary": { "type": "string", "maxLength": 500 },
+        "documentNames": { "type": "array" },
+        "status": { "type": "string", "enum": ["pending_review", "verified", "rejected", "suspended"] },
+        "reviewNotes": { "type": "string", "maxLength": 500 },
+        "reviewedBy": { "type": "string", "maxLength": 128 },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["providerId", "email", "phone", "nicOrRegNumber", "status", "submittedAt", "updatedAt"]
+    },
+    "ServiceCategory": {
+      "title": "ServiceCategory",
+      "description": "Admin-managed marketplace service category with trilingual labels.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "slug": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "name_en": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "name_si": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "name_ta": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "description_en": { "type": "string", "maxLength": 300 },
+        "description_si": { "type": "string", "maxLength": 400 },
+        "description_ta": { "type": "string", "maxLength": 400 },
+        "iconName": { "type": "string", "maxLength": 40 },
+        "imageUrl": { "type": "string", "maxLength": 300 },
+        "subcategories": { "type": "array" },
+        "sortOrder": { "type": "number" },
+        "requiresSpecialistVerification": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "slug", "name_en", "name_si", "name_ta", "subcategories", "sortOrder", "isActive", "updatedAt"]
+    },
+    "ServiceListing": {
+      "title": "ServiceListing",
+      "description": "Published service offered by a provider.",
+      "type": "object",
+      "properties": {
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "providerName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "providerVerified": { "type": "boolean" },
+        "title": { "type": "string", "minLength": 4, "maxLength": 120 },
+        "categoryId": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "subcategory": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "description": { "type": "string", "minLength": 10, "maxLength": 1500 },
+        "province": { "type": "string", "maxLength": 60 },
+        "district": { "type": "string", "maxLength": 60 },
+        "city": { "type": "string", "maxLength": 80 },
+        "coverageDistricts": { "type": "array" },
+        "priceLkr": { "type": "number" },
+        "priceUnit": { "type": "string", "maxLength": 40 },
+        "imageUrl": { "type": "string", "maxLength": 300 },
+        "ratingAvg": { "type": "number" },
+        "reviewCount": { "type": "number" },
+        "isFeatured": { "type": "boolean" },
+        "isSample": { "type": "boolean" },
+        "isActive": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["providerId", "providerName", "title", "categoryId", "subcategory", "description", "province", "district", "city", "coverageDistricts", "priceLkr", "isActive", "createdAt", "updatedAt"]
+    },
+    "JobRequest": {
+      "title": "JobRequest",
+      "description": "Customer service job request open for provider quotations.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerName": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "title": { "type": "string", "minLength": 4, "maxLength": 140 },
+        "categoryId": { "type": "string", "minLength": 1, "maxLength": 64 },
+        "subcategory": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "description": { "type": "string", "minLength": 10, "maxLength": 2000 },
+        "province": { "type": "string", "maxLength": 60 },
+        "district": { "type": "string", "maxLength": 60 },
+        "city": { "type": "string", "maxLength": 80 },
+        "preferredDate": { "type": "string", "maxLength": 30 },
+        "preferredTime": { "type": "string", "maxLength": 40 },
+        "budgetMinLkr": { "type": "number" },
+        "budgetMaxLkr": { "type": "number" },
+        "instructions": { "type": "string", "maxLength": 600 },
+        "photoThumbnails": { "type": "array", "maxItems": 3 },
+        "photoCaptions": { "type": "array", "maxItems": 3 },
+        "status": { "type": "string", "enum": ["open", "quoted", "assigned", "completed", "cancelled", "closed"] },
+        "assignedProviderId": { "type": "string", "maxLength": 128 },
+        "quotationCount": { "type": "number" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "customerName", "title", "categoryId", "subcategory", "description", "province", "district", "city", "preferredDate", "status", "createdAt", "updatedAt"]
+    },
+    "JobPrivateAddress": {
+      "title": "JobPrivateAddress",
+      "description": "Private exact service address revealed only to customer, assigned provider, and admin.",
+      "type": "object",
+      "properties": {
+        "jobId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "exactAddress": { "type": "string", "maxLength": 300 },
+        "contactPhone": { "type": "string", "maxLength": 30 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["jobId", "customerId", "exactAddress", "updatedAt"]
+    },
+    "Quotation": {
+      "title": "Quotation",
+      "description": "Provider quotation submitted for a customer job request.",
+      "type": "object",
+      "properties": {
+        "jobId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "jobTitle": { "type": "string", "maxLength": 140 },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "providerName": { "type": "string", "maxLength": 100 },
+        "providerVerified": { "type": "boolean" },
+        "amountLkr": { "type": "number" },
+        "estimatedDuration": { "type": "string", "maxLength": 80 },
+        "notes": { "type": "string", "maxLength": 1000 },
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected", "withdrawn"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["jobId", "jobTitle", "customerId", "providerId", "providerName", "amountLkr", "estimatedDuration", "status", "createdAt", "updatedAt"]
+    },
+    "Booking": {
+      "title": "Booking",
+      "description": "Confirmed service booking between customer and provider.",
+      "type": "object",
+      "properties": {
+        "jobId": { "type": "string", "maxLength": 128 },
+        "quotationId": { "type": "string", "maxLength": 128 },
+        "listingId": { "type": "string", "maxLength": 128 },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "providerName": { "type": "string", "maxLength": 100 },
+        "serviceTitle": { "type": "string", "maxLength": 140 },
+        "district": { "type": "string", "maxLength": 60 },
+        "city": { "type": "string", "maxLength": 80 },
+        "scheduledDate": { "type": "string", "maxLength": 30 },
+        "scheduledTime": { "type": "string", "maxLength": 40 },
+        "amountLkr": { "type": "number" },
+        "commissionRatePct": { "type": "number" },
+        "commissionLkr": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending_confirmation", "confirmed", "in_progress", "completed", "cancelled"] },
+        "paymentStatus": { "type": "string", "enum": ["unpaid", "demo_paid", "paid", "refunded"] },
+        "reviewSubmitted": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "customerName", "providerId", "providerName", "serviceTitle", "district", "city", "scheduledDate", "amountLkr", "status", "paymentStatus", "createdAt", "updatedAt"]
+    },
+    "Conversation": {
+      "title": "Conversation",
+      "description": "Private 1:1 messaging thread between customer and provider.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "providerName": { "type": "string", "maxLength": 100 },
+        "contextTitle": { "type": "string", "maxLength": 140 },
+        "lastMessage": { "type": "string", "maxLength": 300 },
+        "lastSenderId": { "type": "string", "maxLength": 128 },
+        "unreadByCustomer": { "type": "boolean" },
+        "unreadByProvider": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "customerName", "providerId", "providerName", "contextTitle", "updatedAt"]
+    },
+    "Message": {
+      "title": "Message",
+      "description": "Individual message inside a private conversation.",
+      "type": "object",
+      "properties": {
+        "conversationId": { "type": "string", "minLength": 1, "maxLength": 128 },
+        "senderId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "senderName": { "type": "string", "maxLength": 100 },
+        "text": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["conversationId", "senderId", "senderName", "text", "isRead", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer review tied to a completed booking.",
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerName": { "type": "string", "maxLength": 100 },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "rating": { "type": "number" },
+        "comment": { "type": "string", "minLength": 4, "maxLength": 1000 },
+        "isPublished": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bookingId", "customerId", "customerName", "providerId", "rating", "comment", "isPublished", "createdAt"]
+    },
+    "SubscriptionPlan": {
+      "title": "SubscriptionPlan",
+      "description": "Admin-configurable provider subscription tier.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 60 },
+        "monthlyPriceLkr": { "type": "number" },
+        "yearlyPriceLkr": { "type": "number" },
+        "listingLimit": { "type": "number" },
+        "durationDays": { "type": "number" },
+        "features": { "type": "array" },
+        "isActive": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "name", "monthlyPriceLkr", "yearlyPriceLkr", "listingLimit", "durationDays", "features", "isActive", "updatedAt"]
+    },
+    "Subscription": {
+      "title": "Subscription",
+      "description": "Active or past provider subscription record.",
+      "type": "object",
+      "properties": {
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "planId": { "type": "string", "maxLength": 64 },
+        "planName": { "type": "string", "maxLength": 60 },
+        "billingCycle": { "type": "string", "enum": ["free", "monthly", "yearly"] },
+        "amountLkr": { "type": "number" },
+        "status": { "type": "string", "enum": ["active", "expired", "cancelled", "pending_payment"] },
+        "paymentMode": { "type": "string", "enum": ["free", "payhere_sandbox_demo", "payhere_live"] },
+        "expiresAt": { "type": "string", "maxLength": 60 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["providerId", "planId", "planName", "billingCycle", "amountLkr", "status", "paymentMode", "createdAt"]
+    },
+    "PaymentRecord": {
+      "title": "PaymentRecord",
+      "description": "Server-verified payment record (PayHere Sandbox Demo or live).",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "paymentType": { "type": "string", "enum": ["booking", "subscription", "featured_listing"] },
+        "referenceId": { "type": "string", "maxLength": 128 },
+        "amountLkr": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "transactionRef": { "type": "string", "maxLength": 128 },
+        "gatewayMode": { "type": "string", "enum": ["payhere_sandbox_demo", "payhere_live"] },
+        "status": { "type": "string", "enum": ["pending", "demo_verified", "paid", "failed", "refunded"] },
+        "refundStatus": { "type": "string", "enum": ["none", "requested", "refunded"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "paymentType", "referenceId", "amountLkr", "currency", "transactionRef", "gatewayMode", "status", "refundStatus", "createdAt"]
+    },
+    "CommissionRecord": {
+      "title": "CommissionRecord",
+      "description": "Platform commission record derived from bookings.",
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string", "maxLength": 128 },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "grossAmountLkr": { "type": "number" },
+        "commissionRatePct": { "type": "number" },
+        "commissionAmountLkr": { "type": "number" },
+        "netProviderLkr": { "type": "number" },
+        "status": { "type": "string", "enum": ["pending", "recorded", "settled", "waived"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bookingId", "providerId", "customerId", "grossAmountLkr", "commissionRatePct", "commissionAmountLkr", "netProviderLkr", "status", "createdAt"]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app notification for user events.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "type": { "type": "string", "maxLength": 40 },
+        "title": { "type": "string", "maxLength": 140 },
+        "body": { "type": "string", "maxLength": 400 },
+        "linkPath": { "type": "string", "maxLength": 160 },
+        "isRead": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "type", "title", "body", "isRead", "createdAt"]
+    },
+    "SavedProvider": {
+      "title": "SavedProvider",
+      "description": "Customer bookmark of a provider profile.",
+      "type": "object",
+      "properties": {
+        "customerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "providerName": { "type": "string", "maxLength": 100 },
+        "district": { "type": "string", "maxLength": 60 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["customerId", "providerId", "providerName", "createdAt"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "User complaint or content report for admin moderation.",
+      "type": "object",
+      "properties": {
+        "reporterId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "targetUserId": { "type": "string", "maxLength": 128 },
+        "targetType": { "type": "string", "enum": ["provider", "customer", "listing", "review"] },
+        "reason": { "type": "string", "minLength": 5, "maxLength": 600 },
+        "status": { "type": "string", "enum": ["open", "reviewing", "resolved", "dismissed"] },
+        "resolutionNote": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reporterId", "targetUserId", "targetType", "reason", "status", "createdAt"]
+    },
+    "Dispute": {
+      "title": "Dispute",
+      "description": "Booking or payment dispute managed by administrators.",
+      "type": "object",
+      "properties": {
+        "bookingId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "reporterId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "targetUserId": { "type": "string", "maxLength": 128 },
+        "summary": { "type": "string", "minLength": 5, "maxLength": 800 },
+        "status": { "type": "string", "enum": ["open", "investigating", "resolved_refund", "resolved_closed"] },
+        "resolutionNote": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["bookingId", "reporterId", "targetUserId", "summary", "status", "createdAt"]
+    },
+    "FeaturedListing": {
+      "title": "FeaturedListing",
+      "description": "Promotional featured placement for a service listing.",
+      "type": "object",
+      "properties": {
+        "listingId": { "type": "string", "maxLength": 128 },
+        "providerId": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "title": { "type": "string", "maxLength": 120 },
+        "isActive": { "type": "boolean" },
+        "expiresAt": { "type": "string", "maxLength": 60 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["listingId", "providerId", "title", "isActive", "createdAt"]
+    },
+    "AdminSettings": {
+      "title": "AdminSettings",
+      "description": "Global marketplace commission, CMS announcements, and contact settings.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "defaultCommissionPct": { "type": "number" },
+        "announcement_en": { "type": "string", "maxLength": 300 },
+        "announcement_si": { "type": "string", "maxLength": 400 },
+        "announcement_ta": { "type": "string", "maxLength": 400 },
+        "supportEmail": { "type": "string", "maxLength": 160 },
+        "supportPhone": { "type": "string", "maxLength": 40 },
+        "isPublic": { "type": "boolean" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "defaultCommissionPct", "isPublic", "updatedAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable administrative action log.",
+      "type": "object",
+      "properties": {
+        "actorUid": { "type": "string", "maxLength": 128 },
+        "actorEmail": { "type": "string", "maxLength": 160 },
+        "action": { "type": "string", "maxLength": 120 },
+        "targetPath": { "type": "string", "maxLength": 200 },
+        "details": { "type": "string", "maxLength": 500 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["actorUid", "action", "targetPath", "createdAt"]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Public contact form inquiry submitted by visitors or users.",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "email": { "type": "string", "minLength": 4, "maxLength": 160 },
+        "subject": { "type": "string", "minLength": 3, "maxLength": 160 },
+        "message": { "type": "string", "minLength": 10, "maxLength": 2000 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "email", "subject", "message", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": { "$ref": "#/entities/User" },
+      "description": "Registered user profile and role status."
+    },
+    "/users/{userId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/UserPrivateContact" },
+      "description": "Private user PII contact details."
+    },
+    "/admins/{userId}": {
+      "schema": { "$ref": "#/entities/AdminRecord" },
+      "description": "Admin privilege lookup table."
+    },
+    "/providerProfiles/{providerId}": {
+      "schema": { "$ref": "#/entities/ProviderProfile" },
+      "description": "Public provider profiles."
+    },
+    "/providerVerification/{providerId}": {
+      "schema": { "$ref": "#/entities/ProviderVerification" },
+      "description": "Private verification documents and review decisions."
+    },
+    "/serviceCategories/{categoryId}": {
+      "schema": { "$ref": "#/entities/ServiceCategory" },
+      "description": "Admin-managed 15+ service categories."
+    },
+    "/serviceListings/{listingId}": {
+      "schema": { "$ref": "#/entities/ServiceListing" },
+      "description": "Published provider service listings."
+    },
+    "/jobRequests/{jobId}": {
+      "schema": { "$ref": "#/entities/JobRequest" },
+      "description": "Customer job requests."
+    },
+    "/jobRequests/{jobId}/private/{docId}": {
+      "schema": { "$ref": "#/entities/JobPrivateAddress" },
+      "description": "Private exact job address isolated until booking acceptance."
+    },
+    "/quotations/{quotationId}": {
+      "schema": { "$ref": "#/entities/Quotation" },
+      "description": "Provider quotations for job requests."
+    },
+    "/bookings/{bookingId}": {
+      "schema": { "$ref": "#/entities/Booking" },
+      "description": "Confirmed service bookings."
+    },
+    "/conversations/{conversationId}": {
+      "schema": { "$ref": "#/entities/Conversation" },
+      "description": "Private customer-provider chat threads."
+    },
+    "/conversations/{conversationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/Message" },
+      "description": "Messages inside a conversation."
+    },
+    "/reviews/{reviewId}": {
+      "schema": { "$ref": "#/entities/Review" },
+      "description": "Reviews tied to completed bookings."
+    },
+    "/subscriptionPlans/{planId}": {
+      "schema": { "$ref": "#/entities/SubscriptionPlan" },
+      "description": "Configurable provider subscription plans."
+    },
+    "/subscriptions/{subscriptionId}": {
+      "schema": { "$ref": "#/entities/Subscription" },
+      "description": "Provider subscription records."
+    },
+    "/paymentRecords/{paymentId}": {
+      "schema": { "$ref": "#/entities/PaymentRecord" },
+      "description": "Payment ledger records."
+    },
+    "/commissionRecords/{commissionId}": {
+      "schema": { "$ref": "#/entities/CommissionRecord" },
+      "description": "Marketplace commission ledger."
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "User in-app notifications."
+    },
+    "/savedProviders/{savedId}": {
+      "schema": { "$ref": "#/entities/SavedProvider" },
+      "description": "Customer saved provider bookmarks."
+    },
+    "/reports/{reportId}": {
+      "schema": { "$ref": "#/entities/Report" },
+      "description": "User complaints and content reports."
+    },
+    "/disputes/{disputeId}": {
+      "schema": { "$ref": "#/entities/Dispute" },
+      "description": "Booking or payment disputes."
+    },
+    "/featuredListings/{featuredId}": {
+      "schema": { "$ref": "#/entities/FeaturedListing" },
+      "description": "Promotional featured placements."
+    },
+    "/adminSettings/{settingId}": {
+      "schema": { "$ref": "#/entities/AdminSettings" },
+      "description": "Marketplace commission and CMS settings."
+    },
+    "/auditLogs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Immutable admin audit log."
+    },
+    "/contactMessages/{messageId}": {
+      "schema": { "$ref": "#/entities/ContactMessage" },
+      "description": "Public contact inquiries."
+    }
+  }
+}
